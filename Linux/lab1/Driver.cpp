@@ -3,7 +3,9 @@
 #include <random>
 #include <vector>
 #include <math.h>
+#include <cmath>
 
+#define M_PI       3.14159265358979323846   // pi -- stolen from corecrt_math_defines.h
 
 using namespace std;
 
@@ -36,29 +38,29 @@ double schwefelsFunction(vector<double>* vect)
 {
 	double total = 0.0;
 	
-	for(auto& d: vect)
+	for(auto& d: *vect)
 	{
 		double temp = -1 * d;
 		double root = sqrt(abs(d));
 		temp *= sin(root);
 		total += temp;
-	}
+	} // end for
 	
 	return total;
-}
+} // end method schwefelsFunction
 
 double firstDeJongsFunction(vector<double>* vect)
 {
 	double total = 0.0;
 	
-	for(auto& d: vect)
+	for(auto& d: *vect)
 	{
 		double temp = d * d;
 		total += temp;
-	}
+	} // end for
 	
 	return total;
-}
+} // end method firstDeJongsFunction
 
 double rosenbrockFunction(vector<double>* vect)
 {
@@ -73,10 +75,10 @@ double rosenbrockFunction(vector<double>* vect)
 		temp2 *= 100;
 		
 		total += temp2 + temp;
-	}
+	} // end for
 	
 	return total;
-}
+} // end method rosenbrockFunction
 
 double rastriginFunction(vector<double>* vect)
 {
@@ -89,12 +91,12 @@ double rastriginFunction(vector<double>* vect)
 		
 		temp2 *= 10;
 		temp -= temp2;
-	}
+	} // end for
 	
 	total *= (2 * vect->size());
 	
 	return total;
-}
+} // end method rastriginFunction
 
 
 int main(void)
