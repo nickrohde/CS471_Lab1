@@ -90,13 +90,106 @@ double rastriginFunction(vector<double>* vect)
 		double temp2 = cos((M_PI * 2) * vect->at(i));
 		
 		temp2 *= 10;
-		temp -= temp2;
+		
+		total += temp - temp2;
 	} // end for
 	
 	total *= (2 * vect->size());
 	
 	return total;
 } // end method rastriginFunction
+
+
+double griewangkFunction(vector<double>* vect)
+{
+	double total   = 1.0,
+		   sum     = 0.0,
+		   product = 1.0;
+	
+	for(size_t i = 0; i < vect->size(); i++)
+	{
+		double temp = vect->at(i) * vect->at(i);
+		
+		temp /= 4000;
+		
+		sum += temp;
+		
+		double temp2 = vect->at(i) / sqrt(static_cast<double>(i));
+		temp2 = cos(temp2);
+		
+		product *= temp2;
+	} // end for
+	
+	total += sum - product;
+	
+	return total;
+} // end method griewangkFunction
+
+
+double sineEnvelopeSineWaveFunction(vector<double>* vect)
+{
+	double total   = 0.0,
+		   sum     = 0.0;
+	
+	for(size_t i = 0; i < vect->size() - 1; i++)
+	{
+		double temp2 = 0,
+			   quotient = 0,
+			   sumOfSquares = 0;
+		
+		sumOfSquares = vect->at(i) * vect->at(i);
+		sumOfSquares += vect->at(i+1) * vect->at(i+1);
+
+		sum = sumOfSquares - 0.5;
+		sum = sin(sum);
+		sum = sum * sum;
+		
+		temp2 = sumOfSquares * 0.001;
+		temp2 += 1;
+		temp2 = temp2 * temp2;
+		
+		quotient = sum/temp2;
+		
+		total += quotient;		
+	} // end for
+	
+	total *= -1;
+	
+	return total;
+} // end method sineEnvelopeSineWaveFunction
+
+
+double sineEnvelopeSineWaveFunction(vector<double>* vect)
+{
+	double total   = 0.0,
+		   sum     = 0.0;
+	
+	for(size_t i = 0; i < vect->size() - 1; i++)
+	{
+		double temp2 = 0,
+			   quotient = 0,
+			   sumOfSquares = 0;
+		
+		sumOfSquares = vect->at(i) * vect->at(i);
+		sumOfSquares += vect->at(i+1) * vect->at(i+1);
+
+		sum = sumOfSquares - 0.5;
+		sum = sin(sum);
+		sum = sum * sum;
+		
+		temp2 = sumOfSquares * 0.001;
+		temp2 += 1;
+		temp2 = temp2 * temp2;
+		
+		quotient = sum/temp2;
+		
+		total += quotient;		
+	} // end for
+	
+	total *= -1;
+	
+	return total;
+} // end method sineEnvelopeSineWaveFunction
 
 
 int main(void)
