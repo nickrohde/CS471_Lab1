@@ -5,8 +5,8 @@
   <TabInfoArray Name="TabInfoArray">
     <TabInfo>
       <wxString Value="/home/nick/Projects/CS471/CS471_Lab1/Linux/lab1/Driver.cpp" Name="FileName"/>
-      <int Value="157" Name="FirstVisibleLine"/>
-      <int Value="162" Name="CurrentLine"/>
+      <int Value="513" Name="FirstVisibleLine"/>
+      <int Value="547" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>
