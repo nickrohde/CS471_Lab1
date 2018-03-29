@@ -514,6 +514,56 @@ int main(void)
 	
 	results << "F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15\n";
 	
+	vector<double>* known = new vector<double>();
+	
+	for(int i = 0; i < 30; i++)
+	{
+		known->push_back(420.9687);
+	}
+	
+	double res = schwefelsFunction(known);
+	
+	results << res << ", ";
+	
+	known->clear();
+	
+	for(int i = 0; i < 30; i++)
+	{
+		known->push_back(1);
+	}
+	
+	double res2 = rosenbrockFunction(known);
+	
+	known->clear();
+	
+	for(int i = 0; i < 30; i++)
+	{
+		known->push_back(0);
+	}
+	
+	res = firstDeJongsFunction(known);
+	
+	results << res << "," << res2 << ",";
+	
+	res = rastriginFunction(known);
+	results << res << ",";
+
+	res = griewangkFunction(known);
+	results << res << ",";
+	results << "-1 ,";
+	res = stretchedVSineWaveFunction(known);
+	results << res << ",";
+	results << "-1,";
+	res = ackleysTwoFunction(known);
+	results << res << ",";
+	results << "-1,";
+	results << "-1,";
+	results << "-1,";
+	results << "-1,";
+	res = masterCosineWaveFunction(known);
+	results << res << ",\n";
+	
+	
 	for (int i = 0; i < 100; i++)
 	{
 		vector<double>* vec = getRandomVector(ui_SIZE, &d_MIN, &d_MAX);
@@ -547,11 +597,11 @@ int main(void)
 		temp = pathologicalFunction(vec);
 		results << temp << ",";
 		temp = michalewiczFunction(vec);
-		results << "F13: " << temp << ",";
+		results << temp << ",";
 		temp = masterCosineWaveFunction(vec);
-		results << "F14: " << temp << ",";
+		results << temp << ",";
 		temp = shekelsFoxholesFunction(vec, da_A);
-		results << "F15: " << temp << ",\n";
+		results << temp << ",\n";
 
 		delete vec;
 	} // end for
