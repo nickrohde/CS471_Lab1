@@ -1,3 +1,5 @@
 ﻿  Driver.cpp
-  Project1.vcxproj -> C:\Users\cs471001_17\Desktop\lab1\vs15\Project1\Debug\Project1.exe
-  Project1.vcxproj -> C:\Users\cs471001_17\Desktop\lab1\vs15\Project1\Debug\Project1.pdb (Partial PDB)
+  LINK : C:\Users\nicol\Desktop\Stuff\school\2_Spring18\CS471\CS471_Lab1\vs15\Project1\Debug\Project1.exe not found or not built by the last incremental link; performing full link
+Driver.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
+  Project1.vcxproj -> C:\Users\nicol\Desktop\Stuff\school\2_Spring18\CS471\CS471_Lab1\vs15\Project1\Debug\Project1.exe
+  Project1.vcxproj -> C:\Users\nicol\Desktop\Stuff\school\2_Spring18\CS471\CS471_Lab1\vs15\Project1\Debug\Project1.pdb (Partial PDB)

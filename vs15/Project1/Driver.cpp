@@ -107,7 +107,7 @@ double rastriginFunction(vector<double>* vect)
 		total += temp - temp2;   // x_i^2 - 10cos(2pi * x_i)
 	} // end for
 	
-	total *= (2 * vect->size()); // 2n * SUM
+	total *= (10 * vect->size()); // 2n * SUM
 	
 	return total;
 } // end method rastriginFunction
