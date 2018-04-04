@@ -6,31 +6,34 @@
 #include <vector>
 #include <math.h>
 #include <fstream>
+#include <sstream>
+#include <algorithm>
 
 #ifndef EXIT_SUCCESS
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1
 #endif // !EXIT_SUCCESS
 
-//#define M_PI 3.141592653589793238462643383279
-//#define M_E  2.718281828459045235360287471352
-
+#ifndef _USE_MATH_DEFINES 
+#define M_PI 3.141592653589793238462643383279
+#define M_E  2.718281828459045235360287471352
+#endif
 
 using namespace std;
 
 template <typename T> 
-T getRandomNumberInRange(const T* p_MIN, const T* p_MAX)
+inline T getRandomNumberInRange(const T* p_MIN, const T* p_MAX)
 {
 	static std::random_device rd{};
 	static std::mt19937 engine{ rd() };
 	static std::uniform_real_distribution<T> dist{ *p_MIN, *p_MAX };
 
 	return dist(engine);
-} // end method getRandomNumberInRange
+} // end template getRandomNumberInRange
 
 
 template <typename T>
-vector<T>* getRandomVector(const std::size_t ui_SIZE, const T* p_MIN, const T* p_MAX)
+inline vector<T>* getRandomVector(const std::size_t ui_SIZE, const T* p_MIN, const T* p_MAX)
 {
 	vector<T>* vec = new vector<T>(ui_SIZE);
 
@@ -40,9 +43,69 @@ vector<T>* getRandomVector(const std::size_t ui_SIZE, const T* p_MIN, const T* p
 	} // end for
 
 	return vec;
-} // end method getRandomVector
+} // end template getRandomVector
 
-double schwefelsFunction(const vector<double>* vect)
+
+template <typename T>
+inline double getStandardDeviation(const vector<T>* p_data, const double d_mean)
+{
+	double d_standardDeviation = 0.0;
+
+	for (size_t i = 0; i < p_data->size(); i++)
+	{
+		d_standardDeviation += pow(p_data->at(i) - d_mean, 2);
+	} // end for
+
+	return sqrt(d_standardDeviation / static_cast<double>(p_data->size()));
+} // end template getStandardDeviation
+
+
+template <typename T>
+inline double getRange(const vector<T>* p_data)
+{
+	double  result;
+
+	T	min = p_data->at(0),
+		max = p_data->at(0);
+
+
+	for (size_t i = 0; i < p_data->size(); i++)
+	{
+		if (p_data->at(i) < min)
+		{
+			min = p_data->at(i);
+		} // end if
+		if (p_data->at(i) > max)
+		{
+			max = p_data->at(i);
+		} // end if
+	} // end if
+
+        result = abs(min) + abs(max);
+        
+        return result;
+} // end template getRange
+
+
+template <typename T>
+inline T getMedian(vector<T>* p_data)
+{
+	sort(p_data->begin(), p_data->end());
+
+	if (p_data->size() % 2)
+	{
+		return p_data->at(p_data->size() / 2);
+	} // end if
+	else
+	{
+		T temp = p_data->at(p_data->size() / 2);
+		temp += p_data->at((p_data->size() / 2) + 1);
+		return (temp / 2);
+	} // end else
+} // end template getMedian
+
+
+inline double schwefelsFunction(const vector<double>* vect)
 {
 	double total = 0.0;
 	
@@ -58,7 +121,8 @@ double schwefelsFunction(const vector<double>* vect)
 	return total;
 } // end method schwefelsFunction
 
-double firstDeJongsFunction(const vector<double>* vect)
+
+inline double firstDeJongsFunction(const vector<double>* vect)
 {
 	double total = 0.0;
 	
@@ -71,7 +135,8 @@ double firstDeJongsFunction(const vector<double>* vect)
 	return total;
 } // end method firstDeJongsFunction
 
-double rosenbrockFunction(const vector<double>* vect)
+
+inline double rosenbrockFunction(const vector<double>* vect)
 {
 	double total = 0.0;
 	
@@ -92,15 +157,30 @@ double rosenbrockFunction(const vector<double>* vect)
 	return total;
 } // end method rosenbrockFunction
 
-double rastriginFunction(vector<double>* vect)
+
+inline double rastriginFunction(const vector<double>* vect)
 {
 	double total = 0.0;
+	//* Using the function 10 * n + SUM(x^2 - 10cos(2*pi*x)
+	// SUM[1->n]
+	for (std::size_t i = 0; i < vect->size(); i++)
+	{
+		double  temp = pow(vect->at(i), 2),					// x_i^2
+				temp2 = 10 * (cos(2 * M_PI * vect->at(i)));	// 10cos(2pi * x_i)
+
+		total += (temp - temp2);							// x_i^2 - 10cos(2pi * x_i)
+	} // end for
 	
+	total += (10 * vect->size());							// 10*n + SUM
+
+	total -= 200 * vect->size();							// shift down by -200n to move optimal point from 0 to -200n
+	//*/
+	/* Using the function 2 * n * SUM(x^2 - 10cos(2*pi*x)
 	// SUM[1->n]
 	for(std::size_t i = 0; i < vect->size(); i++)
 	{
-		double temp = vect->at(i) * vect->at(i);      // x_i^2
-		double temp2 = cos((M_PI * 2) * vect->at(i)); // cos(2pi * x_i)
+		double temp  = pow(vect->at(i), 2),           // x_i^2
+			   temp2 = cos((M_PI * 2) * vect->at(i)); // cos(2pi * x_i)
 		
 		temp2 *= 10;             // 10cos(2pi * x_i)
 		
@@ -108,12 +188,12 @@ double rastriginFunction(vector<double>* vect)
 	} // end for
 	
 	total *= (2 * vect->size()); // 2n * SUM
-	
+	/*/
 	return total;
-} // end method rastriginFunction
+} // end method rastriginFunction                                     
 
 
-double griewangkFunction(vector<double>* vect)
+inline double griewangkFunction(const vector<double>* vect)
 {
 	double total   = 0.0, 
 		   sum     = 0.0, // SUM[1->n]
@@ -146,7 +226,7 @@ double griewangkFunction(vector<double>* vect)
 } // end method griewangkFunction
 
 
-double sineEnvelopeSineWaveFunction(vector<double>* vect)
+inline double sineEnvelopeSineWaveFunction(const vector<double>* vect)
 {
 	double total   = 0.5 * (vect->size() - 1), // 0.5(n-1) + SUM
 		   sum     = 0.0;
@@ -162,8 +242,8 @@ double sineEnvelopeSineWaveFunction(vector<double>* vect)
 		sumOfSquares += vect->at(i+1) * vect->at(i+1); // x_i^2 + (x_i+1)^2
 
 		sum = sumOfSquares - 0.5;     // x_i^2 + (x_i+1)^2 - 0.5
-		sum = sum * sum;              // ( x_i^2 + (x_i+1)^2 - 0.5 )^2
-		sum = sin(sum);               // sin( x_i^2 + (x_i+1)^2 - 0.5 )^2
+		sum = sin(sum);               // sin( x_i^2 + (x_i+1)^2 - 0.5 )
+		sum = sum * sum;              // sin^2( x_i^2 + (x_i+1)^2 - 0.5 )
 		
 		temp2 = sumOfSquares * 0.001; //  0.001(x_i^2 + (x_i+1)^2)
 		temp2 += 1;                   //  0.001(x_i^2 + (x_i+1)^2) + 1
@@ -180,7 +260,7 @@ double sineEnvelopeSineWaveFunction(vector<double>* vect)
 } // end method sineEnvelopeSineWaveFunction
 
 
-double stretchedVSineWaveFunction(vector<double>* vect)
+inline double stretchedVSineWaveFunction(const vector<double>* vect)
 {
 	double total   = 0.0;
 	
@@ -200,19 +280,20 @@ double stretchedVSineWaveFunction(vector<double>* vect)
 		
 		temp2 *= 50.0;					// 50( root_10( x_i^2 + (x_i+1)^2 ))
 
-		temp2 = temp2 * temp2;          // ( 50( root_10( x_i^2 + (x_i+1)^2 )))^2
-		temp2 = sin(temp2);             // sin( 50( root_10( x_i^2 + (x_i+1)^2 )))^2
+		temp2 = sin(temp2);             // sin( 50( root_10( x_i^2 + (x_i+1)^2 )))
+		temp2 = temp2 * temp2;          // sin^2( 50( root_10( x_i^2 + (x_i+1)^2 )))
+		temp2 += 1;						// sin^2( 50( root_10( x_i^2 + (x_i+1)^2 ))) + 1
 
-		product = temp2 * temp;         // sin( 50( root_10( x_i^2 + (x_i+1)^2 )))^2 * root_4(x_i^2 + (x_i+1)^2)
+		product = temp2 * temp;         // (sin^2( 50( root_10( x_i^2 + (x_i+1)^2 ))) + 1) * root_4(x_i^2 + (x_i+1)^2)
 
-		total += product + 1;			// sin( 50( root_10( x_i^2 + (x_i+1)^2 )))^2 * root_4(x_i^2 + (x_i+1)^2) + 1 
+		total += product;				// (sin^2( 50( root_10( x_i^2 + (x_i+1)^2 ))) + 1) * root_4(x_i^2 + (x_i+1)^2) 
 	} // end for
 	
 	return total;
 } // end method stretchedVSineWaveFunction
 
 
-double ackleysOneFunction(vector<double>* vect)
+inline double ackleysOneFunction(const vector<double>* vect)
 {
 	const double oneOverE = 1 / pow(M_E, 0.2); // 1 / e ^ 0.2
 
@@ -244,7 +325,7 @@ double ackleysOneFunction(vector<double>* vect)
 } // end method ackleysOneFunction
 
 
-double ackleysTwoFunction(vector<double>* vect)
+inline double ackleysTwoFunction(const vector<double>* vect)
 {
 	double total = 20.0 * (vect->size() - 1.0), // 20(n-1) + SUM
 		   product = 0.0;
@@ -280,7 +361,7 @@ double ackleysTwoFunction(vector<double>* vect)
 } // end method ackleysTwoFunction
 
 
-double eggHolderFunction(vector<double>* vect)
+inline double eggHolderFunction(const vector<double>* vect)
 {
 	double total = 0,
 		   product = 0.0;
@@ -314,7 +395,7 @@ double eggHolderFunction(vector<double>* vect)
 } // end method eggHolderFunction
 
 
-double ranaFunction(vector<double>* vect)
+inline double ranaFunction(const vector<double>* vect)
 {
 	double total = 20 * (vect->size() - 1),
 		   product = 0.0;
@@ -346,7 +427,7 @@ double ranaFunction(vector<double>* vect)
 } // end method ranaFunction
 
 
-double pathologicalFunction(vector<double>* vect)
+inline double pathologicalFunction(const vector<double>* vect)
 {
 	double total = 0.5 * (vect->size() - 1);
 
@@ -360,8 +441,8 @@ double pathologicalFunction(vector<double>* vect)
 		temp = 100 * vect->at(i) * vect->at(i) + vect->at(i + 1) * vect->at(i + 1);
 		temp = sqrt(temp); // sqrt( 100(x_i)^2 + x_(i+1)^2)
 
-		temp *= temp;      // (sqrt( 100(x_i)^2 + x_(i+1)^2))^2
-		temp = sin(temp);  // sin(sqrt( 100(x_i)^2 + x_(i+1)^2))^2
+		temp = sin(temp);  // sin(sqrt( 100(x_i)^2 + x_(i+1)^2))
+		temp *= temp;      // sin^2(sqrt( 100(x_i)^2 + x_(i+1)^2))
 
 		temp -= 0.5;       // sin(sqrt( 100(x_i)^2 + x_(i+1)^2))^2 - 0.5
 
@@ -378,7 +459,7 @@ double pathologicalFunction(vector<double>* vect)
 } // end method pathologicalFunction
 
 
-double michalewiczFunction(vector<double>* vect)
+inline double michalewiczFunction(const vector<double>* vect)
 {
 	double total = 0;
 
@@ -388,14 +469,14 @@ double michalewiczFunction(vector<double>* vect)
 		double	temp = 0,
 				temp2 = 0;
 
-		temp = sin(vect->at(i));               // sin(x_i)
+		temp = sin(vect->at(i));                   // sin(x_i)
 		temp2 = (i+1) * vect->at(i) * vect->at(i); // i * (x_i)^2
-		temp2 /= M_PI;                         // (i * (x_i)^2) / pi
-
-		temp2 = pow(temp2, 20);                // ((i * (x_i)^2) / pi)^20
-		temp2 = sin(temp2);                    // sin((i * (x_i)^2) / pi)^20
-		
-		total += temp * temp2;                 // sin(x_i) * sin((i * (x_i)^2) / pi)^20
+		temp2 /= M_PI;                             // (i * (x_i)^2) / pi
+														
+		temp2 = sin(temp2);                        // sin((i * (x_i)^2) / pi)
+		temp2 = pow(temp2, 20);                    // sin^20((i * (x_i)^2) / pi)
+														
+		total += temp * temp2;                     // sin(x_i) * sin((i * (x_i)^2) / pi)^20
 	} // end for
 
 	total *= -1; // - SUM
@@ -404,7 +485,7 @@ double michalewiczFunction(vector<double>* vect)
 } // end method michalewiczFunction
 
 
-double masterCosineWaveFunction(vector<double>* vect)
+inline double masterCosineWaveFunction(const vector<double>* vect)
 {
 	double total = 0;
 
@@ -432,7 +513,7 @@ double masterCosineWaveFunction(vector<double>* vect)
 } // end method masterCosineWaveFunction
 
 
-double shekelsFoxholesFunction(const vector<double>* vect, double** da_A, const std::size_t ui_M = 30)
+inline double shekelsFoxholesFunction(const vector<double>* vect, double** da_A, const std::size_t ui_M = 30)
 {
 	const double da_C[] = { 0.806,0.517,0.1,0.908,0.965,0.669,0.524,0.902,0.351,0.876,0.462,
 							0.491,0.463,0.741,0.352,0.869,0.813,0.811,0.0828,0.964,0.789,0.360,0.369,
@@ -465,7 +546,7 @@ double shekelsFoxholesFunction(const vector<double>* vect, double** da_A, const 
 } // end method shekelsFoxholesFunction
 
 
-void makeMatrix(double**& da_A)
+inline void makeMatrix(double**& da_A)
 {
 	da_A[0] = new double[10] {9.681, 0.667, 4.783, 9.095, 3.517, 9.325, 6.544, 0.211, 5.122, 2.02};
 	da_A[1] = new double[10] { 9.4, 2.041, 3.788, 7.931, 2.882, 2.672, 3.568, 1.284, 7.033, 7.374 };
@@ -500,111 +581,181 @@ void makeMatrix(double**& da_A)
 } // end method makeMatrix
 
 
-int main(void)
+inline void knownValuesTest(size_t ui_SIZE, ofstream& results)
 {
-	const std::size_t ui_SIZE = 10;
-	const double d_MIN = -500;
-	const double d_MAX = 500;
-	
-	double** da_A = new double*[30];
-
-	makeMatrix(da_A);
-
-	ofstream results("results.csv", ios::app | ios::out);
-	
-	results << "F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15\n";
-	
 	vector<double>* known = new vector<double>();
-	
-	for(int i = 0; i < 30; i++)
+
+	for (int i = 0; i < ui_SIZE; i++)
 	{
 		known->push_back(420.9687);
-	}
-	
+	} // end for
+
 	double res = schwefelsFunction(known);
-	
+
+	results << ui_SIZE << ",";
 	results << res << ", ";
-	
+
 	known->clear();
-	
-	for(int i = 0; i < 30; i++)
+
+	for (int i = 0; i < ui_SIZE; i++)
 	{
 		known->push_back(1);
-	}
-	
+	} // end for
+
 	double res2 = rosenbrockFunction(known);
-	
+
 	known->clear();
-	
-	for(int i = 0; i < 30; i++)
+
+	for (int i = 0; i < ui_SIZE; i++)
 	{
 		known->push_back(0);
-	}
-	
+	} // end for
+
 	res = firstDeJongsFunction(known);
-	
+
 	results << res << "," << res2 << ",";
-	
+
 	res = rastriginFunction(known);
 	results << res << ",";
 
 	res = griewangkFunction(known);
 	results << res << ",";
-	results << "-1 ,";
+	results << "N/A,";
 	res = stretchedVSineWaveFunction(known);
 	results << res << ",";
-	results << "-1,";
+	results << "N/A,";
 	res = ackleysTwoFunction(known);
 	results << res << ",";
-	results << "-1,";
-	results << "-1,";
-	results << "-1,";
-	results << "-1,";
+	results << "N/A,";
+	results << "N/A,";
+	results << "N/A,";
+	results << "N/A,";
 	res = masterCosineWaveFunction(known);
-	results << res << ",\n";
-	
-	
-	for (int i = 0; i < 100; i++)
+	results << res << ",N/A,\n";
+	results << "Expected:," << (-418.9829 * static_cast<double>(known->size())) << ",0,0," << (-200 * static_cast<double>(known->size())) << ",0,N/A,0,N/A,0,N/A,N/A,N/A,N/A," << (static_cast<int>(1) - static_cast<int>(known->size())) << ",N/A\n";
+} // end method knownValueTest
+
+
+inline void testRun(double(*f)(const vector<double>*), ofstream& results, const size_t ui_ITERATIONS, const double d_MIN, const double d_MAX)
+{
+    // reserve space, and initialize variables to reduce latency during test
+	double	d_temp      = 0,
+			d_total     = 0,
+			d_mean      = 0,
+			d_avgTime   = 0,
+			d_totalTime = 0,
+		    d_standDev  = 0;
+
+	std::chrono::high_resolution_clock::time_point	compute_start = std::chrono::high_resolution_clock::now(),
+													compute_end = std::chrono::high_resolution_clock::now();
+
+	for (size_t ui_size = 10; ui_size <= 30; ui_size += 10)
+	{
+		results << "Data with input size = " << ui_size << ",\n";
+
+		vector<double>* data = new vector<double>();
+		vector<double>* vec;
+
+		for (int i = 0; i < ui_ITERATIONS; i++)
+		{
+			vec = getRandomVector(ui_size, &d_MIN, &d_MAX);
+
+			compute_start = std::chrono::high_resolution_clock::now();
+
+			d_temp = (*f)(vec);
+
+			compute_end = std::chrono::high_resolution_clock::now();
+
+			std::chrono::duration<double> time_to_compute = std::chrono::duration_cast<std::chrono::duration<double>>(compute_end - compute_start);
+
+			d_totalTime = d_totalTime + time_to_compute.count();
+			d_total = d_total + d_temp;
+
+			results << d_temp << "," << time_to_compute.count() << ",";
+
+			data->push_back(d_temp);
+
+			delete vec;
+		} // end for
+
+		d_avgTime  = d_totalTime / static_cast<double>(ui_ITERATIONS);
+		d_mean     = d_total / static_cast<double>(ui_ITERATIONS);
+		d_standDev = getStandardDeviation(data, d_mean);
+
+		results << "\n";
+		results << "Mean time:, " << d_avgTime;
+		results << ",";
+		results << "Mean value:, " << d_mean;
+		results << ",";
+		results << "Median value:, " << getMedian(data);
+		results << ",";
+		results << "Range:, " << getRange(data);
+		results << ",";
+		results << "Standard Deviation:, " << d_standDev << ",\n";
+	} // end for
+
+	results << "\n";
+} // end method testRun
+
+
+inline void foxholeTestRun(ofstream& results, const size_t ui_ITERATIONS, const size_t ui_SIZE)
+{
+	const double	d_MIN       = 0 ,
+					d_MAX       = 10;
+
+	double			d_temp      = 0 ,
+					d_total     = 0 ,
+					d_mean      = 0 ,
+					d_avgTime   = 0 ,
+					d_totalTime = 0 ,
+					d_standDev  = 0 ;
+
+	double**		da_A = new double*[30];
+
+	std::chrono::high_resolution_clock::time_point	compute_start = std::chrono::high_resolution_clock::now(),
+		compute_end = std::chrono::high_resolution_clock::now();
+
+	makeMatrix(da_A);
+
+	vector<double>* data = new vector<double>();
+
+	for (int i = 0; i < ui_ITERATIONS; i++)
 	{
 		vector<double>* vec = getRandomVector(ui_SIZE, &d_MIN, &d_MAX);
-		double temp = 0;
 
-		temp = schwefelsFunction(vec);
+		compute_start = std::chrono::high_resolution_clock::now();
 
-		results << temp << ",";
+		d_temp = shekelsFoxholesFunction(vec, da_A);
 
-		temp = firstDeJongsFunction(vec);
-		results << temp << ",";
-		temp = rosenbrockFunction(vec);
-		results << temp << ",";
-		temp = rastriginFunction(vec);
-		results << temp << ",";
-		temp = griewangkFunction(vec);
-		results << temp << ",";
-		temp = sineEnvelopeSineWaveFunction(vec);
-		results << temp << ",";
-		temp = stretchedVSineWaveFunction(vec);
-		results << temp << ",";
-		temp = ackleysOneFunction(vec);
-		results << temp << ",";
-		temp = ackleysTwoFunction(vec);
-		results << temp << ",";
-		temp = eggHolderFunction(vec);
-		results << temp << ",";
+		compute_end = std::chrono::high_resolution_clock::now();
 
-		temp = ranaFunction(vec);
-		results << temp << ",";
-		temp = pathologicalFunction(vec);
-		results << temp << ",";
-		temp = michalewiczFunction(vec);
-		results << temp << ",";
-		temp = masterCosineWaveFunction(vec);
-		results << temp << ",";
-		temp = shekelsFoxholesFunction(vec, da_A);
-		results << temp << ",\n";
+		std::chrono::duration<double> time_to_compute = std::chrono::duration_cast<std::chrono::duration<double>>(compute_end - compute_start);
+
+		d_totalTime += time_to_compute.count();
+		d_total += d_temp;
+
+		results << d_temp << "," << time_to_compute.count() << ",";
+
+		data->push_back(d_temp);
 
 		delete vec;
 	} // end for
+
+	d_avgTime  = d_totalTime / static_cast<double>(ui_ITERATIONS);
+	d_mean     = d_total / static_cast<double>(ui_ITERATIONS);
+	d_standDev = getStandardDeviation(data, d_mean);
+
+	results << "\n";
+	results << "Mean time:, " << d_avgTime;
+	results << ",";
+	results << "Mean value:, " << d_mean;
+	results << ",";
+	results << "Median value:, " << getMedian(data);
+	results << ",";
+	results << "Range:, " << getRange(data);
+	results << ",";
+	results << "Standard Deviation:, " << d_standDev;
+	results << "\n";
 
 
 	for (std::size_t i = 0; i < 30; i++)
@@ -613,6 +764,100 @@ int main(void)
 	} // end for
 
 	delete[] da_A;
+} // end method foxholeTestRun
+
+
+int main(void)
+{
+	const std::size_t ui_SIZE = 10;
+	const std::size_t ui_ITERATIONS = 100;
+
+	ofstream results("results.csv", ios::app | ios::out);
+	ofstream knownResults("knownValuesResults.csv", ios::app | ios::out);
+
+	for (int i = 0; i < 100; i++)
+	{
+		results << "Run " << (i+1) << ", Time " << (i+1) << ",";
+	} // end for 
+
+	results << "\n,";
+
+	std::chrono::duration<double, std::nano> ns = typename std::chrono::high_resolution_clock::duration(1);
+	std::chrono::high_resolution_clock::time_point	compute_start = std::chrono::high_resolution_clock::now(),
+													compute_end = std::chrono::high_resolution_clock::now();
+
+	cout << "Clock precision for testing is 1 tick = " << ns.count() << " ns." << endl;
+
+
+	cout << "Starting tests with known data ..." << endl;
+	compute_start = std::chrono::high_resolution_clock::now();
+
+
+	knownResults << "Size,F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15\n";
+	for (size_t i = 10; i <= 30; i += 10)
+	{
+		knownValuesTest(i, knownResults);
+	} // end for
+	knownResults.close();
+
+	cout << "Finished tests with known data." << endl << endl;
+
+	cout << "Starting tests with random data ..." << endl;
+
+	results << "\nSchwefel's Function tests:\n";
+	testRun(schwefelsFunction, results, ui_ITERATIONS, -512, 512);
+
+	results << "\nFirst De Jong Function tests:\n";
+	testRun(firstDeJongsFunction, results, ui_ITERATIONS, -100, 100);
+
+	results << "\nRosenbrock's Saddle Function tests:\n";
+	testRun(rosenbrockFunction, results, ui_ITERATIONS, -100, 100);
+
+	results << "\nRastrigin's Function tests:\n";
+	testRun(rastriginFunction, results, ui_ITERATIONS, -30, 30);
+
+	results << "\nGriewang's Function tests:\n";
+	testRun(griewangkFunction, results, ui_ITERATIONS, -500, 500);
+
+	results << "\nSine Envelope Sin Wave Function tests:\n";
+	testRun(sineEnvelopeSineWaveFunction, results, ui_ITERATIONS, -30, 30);
+
+	results << "\nStretched V Sine Wave Function tests:\n";
+	testRun(stretchedVSineWaveFunction, results, ui_ITERATIONS, -30, 30);
+
+	results << "\nAckley's One Function tests:\n";
+	testRun(ackleysOneFunction, results, ui_ITERATIONS, -32, 32);
+
+	results << "\nAckley's Two Function tests:\n";
+	testRun(ackleysTwoFunction, results, ui_ITERATIONS, -32, 32);
+
+	results << "\nEgg Holder Function tests:\n";
+	testRun(eggHolderFunction, results, ui_ITERATIONS, -500, 500);
+
+	results << "\nRana Function tests:\n";
+	testRun(ranaFunction, results, ui_ITERATIONS, -500, 500);
+
+	results << "\nPathological Function tests:\n";
+	testRun(pathologicalFunction, results, ui_ITERATIONS, -100, 100);
+
+	results << "\nMichalewicz Function tests:\n";
+	testRun(michalewiczFunction, results, ui_ITERATIONS, 0, M_PI);
+
+	results << "\nMaster Cosine Wave Function tests:\n";
+	testRun(masterCosineWaveFunction, results, ui_ITERATIONS, 0, 10);
+	
+	results << "\nShekel's Foxholes Function tests:\n";
+
+	foxholeTestRun(results, ui_ITERATIONS, ui_SIZE);
+
+	compute_end = std::chrono::high_resolution_clock::now();
+	
+	std::chrono::duration<double> time_to_compute = std::chrono::duration_cast<std::chrono::duration<double>>(compute_end - compute_start);
+
+	cout << "Finished tests with random data." << endl;
+	cout << "Testing took " << time_to_compute.count() << " seconds." << endl;
+	
+	results.close();	
 
 	system("pause");
 

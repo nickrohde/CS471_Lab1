@@ -21,7 +21,7 @@
 \documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
 
 \usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
-\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+%\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
 \usepackage[english]{babel} % English language/hyphenation
 \usepackage{amsmath,amsfonts,amsthm} % Math packages
 
@@ -153,14 +153,14 @@ Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et 
 	\label{Tab1d}
 	\begin{tabular}{c|ccccc|ccccc|ccccc}
 	\noalign{\smallskip}\hline\noalign{\smallskip}
-	Problem & \multicolumn{5}{c}{DE}& \multicolumn{5}{|c|}{GA}
-        &  \multicolumn{5}{c}{PSO} \\ 
+	Problem & \multicolumn{5}{c}{$D_{10}$}& \multicolumn{5}{|c|}{$D_{20}$}
+        &  \multicolumn{5}{c}{$D_{30}$} \\ 
 	\noalign{\smallskip}\hline\noalign{\smallskip}
 		 & Avg & Median & Range & SD & T(s) & Avg & Median
                  & Range & SD & T(s) & Avg & Median & Range & SD &
                  T(s) \\ 
 \noalign{\smallskip}\hline\noalign{\smallskip}
-			$f_1$ & 2.40 & 0.57 & 5.36 & 1.48 & 0.6 & 2.34 & 2.16 & 2.39 & 0.08 & 1 & 2.38 & 2.36 & 2.4 & 0.02 & 1 \\ 
+			$f_1$ & -61.8187 & -46.7945 & 3177.65 & 596.766 & 4.33294e-6 & 2.34 & 2.16 & 2.39 & 0.08 & 1 & 2.38 & 2.36 & 2.4 & 0.02 & 1 \\ 
 			$f_2$ & 3.30 & 2.13 & 4.48 & 0.72 & 1.08 & 3.25 & 3.15 & 3.3 & 0.06 & 2 & 3.29 & 3.24 & 3.3 & 0.02 & 2 \\ 
 			$f_3$ & 4.81 & 0.97 & 7.45 & 1.77 & 2.31 & 4.15 & 3.73 & 4.61 & 0.28 & 1.25 & 4.24 & 3.88 & 4.67 & 0.25 & 1.25 \\ 
 			$f_4$ & 6.23 & 4.86 & 7.36 & 0.89 & 3.54 & 5.36 & 4.94 & 5.83 & 0.28 & 2.5 & 5.75 & 5.43 & 6.12 & 0.23 & 2.5 \\ 
