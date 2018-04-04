@@ -51,6 +51,7 @@ inline double getStandardDeviation(const vector<T>* p_data, const double d_mean)
 {
 	double d_standardDeviation = 0.0;
 
+#pragma loop(hint_parallel(0))
 	for (size_t i = 0; i < p_data->size(); i++)
 	{
 		d_standardDeviation += pow(p_data->at(i) - d_mean, 2);
@@ -109,6 +110,7 @@ inline double schwefelsFunction(const vector<double>* vect)
 {
 	double total = 0.0;
 	
+#pragma loop(hint_parallel(0))
 	// SUM[1->n]
 	for(auto& d: *vect)
 	{
@@ -126,6 +128,7 @@ inline double firstDeJongsFunction(const vector<double>* vect)
 {
 	double total = 0.0;
 	
+#pragma loop(hint_parallel(0))
 	// SUM[1->n]
 	for(auto& d: *vect)
 	{
@@ -140,6 +143,7 @@ inline double rosenbrockFunction(const vector<double>* vect)
 {
 	double total = 0.0;
 	
+#pragma loop(hint_parallel(0))
 	// SUM[1->n-1]
 	for(std::size_t i = 0; i < vect->size() - 1; i++)
 	{
@@ -161,7 +165,8 @@ inline double rosenbrockFunction(const vector<double>* vect)
 inline double rastriginFunction(const vector<double>* vect)
 {
 	double total = 0.0;
-	//* Using the function 10 * n + SUM(x^2 - 10cos(2*pi*x)
+	//* Using the function 10 * n + [SUM(x^2 - 10cos(2*pi*x)] - 200*N
+#pragma loop(hint_parallel(0))
 	// SUM[1->n]
 	for (std::size_t i = 0; i < vect->size(); i++)
 	{
@@ -176,6 +181,7 @@ inline double rastriginFunction(const vector<double>* vect)
 	total -= 200 * vect->size();							// shift down by -200n to move optimal point from 0 to -200n
 	//*/
 	/* Using the function 2 * n * SUM(x^2 - 10cos(2*pi*x)
+#pragma loop(hint_parallel(0))
 	// SUM[1->n]
 	for(std::size_t i = 0; i < vect->size(); i++)
 	{
@@ -199,6 +205,7 @@ inline double griewangkFunction(const vector<double>* vect)
 		   sum     = 0.0, // SUM[1->n]
 		   product = 1.0; // PROD[1->n]
 	
+#pragma loop(hint_parallel(0))
 	for(std::size_t i = 0; i < vect->size(); i++)
 	{
 		// SUM[1->n]
@@ -231,6 +238,7 @@ inline double sineEnvelopeSineWaveFunction(const vector<double>* vect)
 	double total   = 0.5 * (vect->size() - 1), // 0.5(n-1) + SUM
 		   sum     = 0.0;
 	
+#pragma loop(hint_parallel(0))
 	// SUM[1->n-1]
 	for(std::size_t i = 0; i < vect->size() - 1; i++)
 	{
@@ -264,6 +272,7 @@ inline double stretchedVSineWaveFunction(const vector<double>* vect)
 {
 	double total   = 0.0;
 	
+#pragma loop(hint_parallel(0))
 	// SUM[1->n-1]
 	for(std::size_t i = 0; i < vect->size() - 1; i++)
 	{
@@ -299,6 +308,7 @@ inline double ackleysOneFunction(const vector<double>* vect)
 
 	double total = 0.0;
 
+#pragma loop(hint_parallel(0))
 	// SUM[1->n-1]
 	for (std::size_t i = 0; i < vect->size() - 1; i++)
 	{
@@ -330,6 +340,7 @@ inline double ackleysTwoFunction(const vector<double>* vect)
 	double total = 20.0 * (vect->size() - 1.0), // 20(n-1) + SUM
 		   product = 0.0;
 
+#pragma loop(hint_parallel(0))
 	// SUM[1->n-1]
 	for (std::size_t i = 0; i < vect->size() - 1; i++)
 	{
@@ -366,6 +377,7 @@ inline double eggHolderFunction(const vector<double>* vect)
 	double total = 0,
 		   product = 0.0;
 
+#pragma loop(hint_parallel(0))
 	// SUM[1->n-1]
 	for (std::size_t i = 0; i < vect->size() - 1; i++)
 	{
@@ -400,6 +412,7 @@ inline double ranaFunction(const vector<double>* vect)
 	double total = 20 * (vect->size() - 1),
 		   product = 0.0;
 
+#pragma loop(hint_parallel(0))
 	// SUM[1->n-1]
 	for (std::size_t i = 0; i < vect->size() - 1; i++)
 	{
@@ -431,6 +444,7 @@ inline double pathologicalFunction(const vector<double>* vect)
 {
 	double total = 0.5 * (vect->size() - 1);
 
+#pragma loop(hint_parallel(0))
 	// SUM[1->n-1]
 	for (std::size_t i = 0; i < vect->size() - 1; i++)
 	{
@@ -463,6 +477,7 @@ inline double michalewiczFunction(const vector<double>* vect)
 {
 	double total = 0;
 
+#pragma loop(hint_parallel(0))
 	// SUM[1->n]
 	for (std::size_t i = 0; i < vect->size(); i++)
 	{
@@ -489,6 +504,7 @@ inline double masterCosineWaveFunction(const vector<double>* vect)
 {
 	double total = 0;
 
+#pragma loop(hint_parallel(0))
 	// SUM[1->n-1]
 	for (std::size_t i = 0; i < vect->size() - 1; i++)
 	{
@@ -521,6 +537,7 @@ inline double shekelsFoxholesFunction(const vector<double>* vect, double** da_A,
 
 	double total = 0;
 
+#pragma loop(hint_parallel(0))
 	// SUM[1->m]
 	for (std::size_t i = 0; i < ui_M; i++)
 	{
@@ -585,6 +602,7 @@ inline void knownValuesTest(size_t ui_SIZE, ofstream& results)
 {
 	vector<double>* known = new vector<double>();
 
+#pragma loop(hint_parallel(0))
 	for (int i = 0; i < ui_SIZE; i++)
 	{
 		known->push_back(420.9687);
@@ -597,6 +615,7 @@ inline void knownValuesTest(size_t ui_SIZE, ofstream& results)
 
 	known->clear();
 
+#pragma loop(hint_parallel(0))
 	for (int i = 0; i < ui_SIZE; i++)
 	{
 		known->push_back(1);
@@ -606,6 +625,7 @@ inline void knownValuesTest(size_t ui_SIZE, ofstream& results)
 
 	known->clear();
 
+#pragma loop(hint_parallel(0))
 	for (int i = 0; i < ui_SIZE; i++)
 	{
 		known->push_back(0);
@@ -656,6 +676,7 @@ inline void testRun(double(*f)(const vector<double>*), ofstream& results, const 
 		vector<double>* data = new vector<double>();
 		vector<double>* vec;
 
+#pragma loop(hint_parallel(0))
 		for (int i = 0; i < ui_ITERATIONS; i++)
 		{
 			vec = getRandomVector(ui_size, &d_MIN, &d_MAX);
@@ -719,6 +740,7 @@ inline void foxholeTestRun(ofstream& results, const size_t ui_ITERATIONS, const 
 
 	vector<double>* data = new vector<double>();
 
+#pragma loop(hint_parallel(0))
 	for (int i = 0; i < ui_ITERATIONS; i++)
 	{
 		vector<double>* vec = getRandomVector(ui_SIZE, &d_MIN, &d_MAX);
@@ -769,13 +791,13 @@ inline void foxholeTestRun(ofstream& results, const size_t ui_ITERATIONS, const 
 
 int main(void)
 {
-	const std::size_t ui_SIZE = 10;
 	const std::size_t ui_ITERATIONS = 100;
 
 	ofstream results("results.csv", ios::app | ios::out);
 	ofstream knownResults("knownValuesResults.csv", ios::app | ios::out);
 
-	for (int i = 0; i < 100; i++)
+	// output file setup
+	for (size_t i = 0; i < ui_ITERATIONS; i++)
 	{
 		results << "Run " << (i+1) << ", Time " << (i+1) << ",";
 	} // end for 
@@ -788,19 +810,27 @@ int main(void)
 
 	cout << "Clock precision for testing is 1 tick = " << ns.count() << " ns." << endl;
 
-
 	cout << "Starting tests with known data ..." << endl;
 	compute_start = std::chrono::high_resolution_clock::now();
 
+#pragma region known_output_tests
 
 	knownResults << "Size,F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15\n";
+
+#pragma loop(hint_parallel(0))
+	// run known tests with 10, 20, and 30 dimensions
 	for (size_t i = 10; i <= 30; i += 10)
 	{
 		knownValuesTest(i, knownResults);
 	} // end for
+
 	knownResults.close();
 
 	cout << "Finished tests with known data." << endl << endl;
+
+#pragma endregion
+
+#pragma region random_data_tests
 
 	cout << "Starting tests with random data ..." << endl;
 
@@ -848,7 +878,9 @@ int main(void)
 	
 	results << "\nShekel's Foxholes Function tests:\n";
 
-	foxholeTestRun(results, ui_ITERATIONS, ui_SIZE);
+	foxholeTestRun(results, ui_ITERATIONS, 30);
+
+#pragma endregion
 
 	compute_end = std::chrono::high_resolution_clock::now();
 	
@@ -857,7 +889,7 @@ int main(void)
 	cout << "Finished tests with random data." << endl;
 	cout << "Testing took " << time_to_compute.count() << " seconds." << endl;
 	
-	results.close();	
+	results.close();
 
 	system("pause");
 
