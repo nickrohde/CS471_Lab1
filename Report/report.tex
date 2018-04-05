@@ -26,7 +26,7 @@
 \usepackage{amsmath,amsfonts,amsthm} % Math packages
 
 \usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
-
+\usepackage[margin=0.25in]{geometry}
 \usepackage{sectsty} % Allows customizing section commands
 \usepackage{rotating} % for long tables
 \allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
@@ -40,7 +40,7 @@
 \renewcommand{\headrulewidth}{0pt} % Remove header underlines
 \renewcommand{\footrulewidth}{0pt} % Remove footer underlines
 \setlength{\headheight}{13.6pt} % Customize the height of the header
-
+\usepackage{tabularx,ragged2e,booktabs,caption}
 \numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
 \numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
 \numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
@@ -65,6 +65,19 @@
 
 \date{\normalsize 6$^{th}$ April, 2018} % Today's date or a custom date
 
+\usepackage{hyperref}
+\hypersetup
+{
+	colorlinks=true,
+	citecolor=black,
+	filecolor=black,
+	linkcolor=black,
+	urlcolor=blue,
+	linktoc=all,
+	linkcolor=blue,
+}
+
+
 \begin{document}
 
 \maketitle % Print the title
@@ -75,81 +88,56 @@
 
 \section{Benchmark Functions}
 
-\lipsum[2] % Dummy text
+	\subsection{Overview}
+	For this project, we implemented fifteen standard benchmarking functions for optimization algorithms; namely, Schwefel's Function, De Jong's 1$^{\mathnormal{st}}$ Function, Rosenbrock's Saddle, Rastrigin's Function, Griewangk's Function, Sine Envelope Sine Wave Function, Stretch V Sine Wave Function, Ackley's Function (1), Ackley Function (2), Egg Holder, Rana's Function, Pathological Function, Michalewicz's Function, Master's Cosine Wave, and Schekel's Foxhole. These functions were implemented for to be used in benchmarking of algorithms for future projects. 
+			
+	\subsection{Testing}
+	Testing of these functions was done using a set of known optimal points, as well as random data. The results of the optimal points can be found in \hyperref[T1]{table 2.1}; some functions do not have a known optimal point, thus, this table is only partially filled in. Results for the random data can be found in \hyperref[T2]{table 2.2}. All random data was generated with the STL implementation of the mersenne twister (mt19937) and the numbers were generated in the range for each function. Furthermore, 100 samples were generated for all tests, and all statistical data displayed in \hyperref[T2]{table 2.2} is the average of the 100 data points.
+	\pagebreak
+\section{Analysis}
 
-\begin{align} 
-\begin{split}
-(x+y)^3 	&= (x+y)^2(x+y)\\
-&=(x^2+2xy+y^2)(x+y)\\
-&=(x^3+2x^2y+xy^2) + (x^2y+2xy^2+y^3)\\
-&=x^3+3x^2y+3xy^2+y^3
-\end{split}					
-\end{align}
+	\subsection{Optimal Points}
+	\hyperref[T1]{Table 2.1} shows the results of the tests run with the known optimal points. Here we can see that the program correctly calculated all known global optima of the functions without error. 
+		
+	\subsection{Random Data}
+	On the other hand, the random data mostly generated garbage output (as is to be expected), however, the Sine Envelope Sine Wave function produced values fairly close to the optimums (-13.4235, -28.3385, -43.2535), also of note is that the standard deviation for this function was extremely small in all cases, with a minimum of 0.07 and a maximum of 14.05. Master's Cosine Wave also produced very clustered data with even smaller standard deviations than the Sine Envelope Sine Wave, ranging from 0.0031 to 0.04.\\ Another interesting part of the results is the execution time of the functions. All functions lost at most one magnitude in execution time when the input size was trippled, with some only increasing by a small fraction, namely De Jong's Function only increased by $2\times10^-7$ seconds when the dimensions went from 10 to 30. \\
+	
+\begin{minipage}{\linewidth}
+	\centering
+	\captionof{table}{Optimal Point Results} \label{tab:title} 
+	\begin{tabular}{c|cc|cc|cc}\label{T1}
+		Function        & $D_{10}$ & Expected & $D_{20}$ & Expected & $D_{30}$  & Expected \\
+		\hline
+		$f_1$ 			& -4189.83 & -4189.83 & -8379.66 & -8379.66 & -12569.5 & -12569.5 \\
+		$f_2$           & 0 & 0 & 0 & 0 &  0 & 0 \\
+		$f_3$           & 0 & 0 & 0 & 0 &  0 & 0 \\
+		$f_4$     		& -2000 & -2000 & -4000 & -4000 & -6000 & -6000 \\
+		$f_5$           & 0 & 0 & 0 & 0 &  0 & 0 \\
+		$f_6$    		& * & * & * & * &  * & * \\
+		$f_7$           & 0 & 0 & 0 & 0 &  0 & 0 \\
+		$f_8$    		& * & * & * & * &  * & * \\
+		$f_9$           & 0 & 0 & 0 & 0 &  0 & 0 \\
+		$f_{10}$   		& * & * & * & * &  * & * \\
+		$f_{11}$   		& * & * & * & * &  * & * \\
+		$f_{12}$   		& * & * & * & * &  * & * \\
+		$f_{13}$   		& * & * & * & * &  * & * \\
+		$f_{14}$     	& -9 & -9 & -19 & -19 &  -29 & -29 \\
+		$f_{15}$     	& * & * & * & * &  * & * \\
+	\end{tabular}
+	\bigskip\\
+	\small
+	\textit{* denotes that the optimal point is unknown}
+\end{minipage}
 
-Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies
 
-%------------------------------------------------
-
-\subsection{Heading on level 2 (subsection)}
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. 
-\begin{align}
-A = 
-\begin{bmatrix}
-A_{11} & A_{21} \\
-A_{21} & A_{22}
-\end{bmatrix}
-\end{align}
-Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.
-
-%------------------------------------------------
-
-\subsubsection{Heading on level 3 (subsubsection)}
-
-\lipsum[3] % Dummy text
-
-\paragraph{Heading on level 4 (paragraph)}
-
-\lipsum[6] % Dummy text
-
-%----------------------------------------------------------------------------------------
-%	PROBLEM 2
-%----------------------------------------------------------------------------------------
-
-\section{Lists}
-
-%------------------------------------------------
-
-\subsection{Example of list (3*itemize)}
-\begin{itemize}
-	\item First item in a list 
-		\begin{itemize}
-		\item First item in a list 
-			\begin{itemize}
-			\item First item in a list 
-			\item Second item in a list 
-			\end{itemize}
-		\item Second item in a list 
-		\end{itemize}
-	\item Second item in a list 
-\end{itemize}
-
-%------------------------------------------------
-
-\subsection{Example of list (enumerate)}
-\begin{enumerate}
-\item First item in a list 
-\item Second item in a list 
-\item Third item in a list
-\end{enumerate}
 
 %----------------------------------------------------------------------------------------
 
 
 \begin{sidewaystable}
-	\small
+	\tiny
 	\centering
-	\caption{Computation comparison of DE, GA and PSO}
+	\caption{Computation comparison for 10, 20, and 30 Dimensions}
 	\label{Tab1d}
 	\begin{tabular}{c|ccccc|ccccc|ccccc}
 	\noalign{\smallskip}\hline\noalign{\smallskip}
@@ -160,29 +148,27 @@ Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et 
                  & Range & SD & T(s) & Avg & Median & Range & SD &
                  T(s) \\ 
 \noalign{\smallskip}\hline\noalign{\smallskip}
-			$f_1$ & -61.8187 & -46.7945 & 3177.65 & 596.766 & $4.33x10^{-6}$ & -147.224 & 1.73384 & 4926.18 & 917.825 & $1.18x10^{-5}$ & -303.707 & -268.385 & 5861.72 & 1131.09 & $2.05x10^{-5}$ \\ 
-			$f_2$ & 859142 & 838788 & $1.75x10^{6}$ & 237719 & $8.96x10^{-7}$ & $2.64x10^{6}$ & $1.81x10^{6}$ & $3.20x10^{6}$ & 925823 & $1.92x10{-6}$ & $5.21x10^{6}$ & $2.62x10^{6}$ & $5.08x10^{6}$ & $2.67x10^{6}$ & $3.29x10^{-6}$ \\ 
-			$f_3$ & $1.18x10^{13}$ & $1.11x10^{13}$ & $3.30x10^{13}$ & $5.07x10^{12}$ & $1.82x10^{-6}$ & $3.79x10^{13}$ & $2.63x10^{13}$ & $6.22x10^{13}$ & $1.47x10^{13}$ & $4.57x10^{-6}$ & $7.79x10^{13}$ & $4.08x10^{13}$ & $9.09x10^{13}$ & $3.92x10^{13}$ & $8.65x10^{-6}$ \\ 
-			$f_4$ & $870095$ & 862871 & $1.84x10^{6}$ & 242235 & $3.02x10^{-6}$ & $2.62x10^{6}$ & $1.77x10^{6}$ & $3.85x10^{6}$ & 942880 & $8.67x10^{-6}$ & $5.22x10^{6}$ & $2.60x10^{6}$ & $5.41x10^{6}$ & $2.66x10^{6}$ & $1.63x10^{-5}$ \\ 
-			$f_5$ & 219.839 & 207.346 & 441.223 & 69.0671 & $3.17x10^{-6}$ & 661.693 & 451.624 & 871.891 & 238.635 & $9.03x10^{-6}$ & 1315.61 & 669.639 & 1229.62 & 668.7 & $1.75x10^{-5}$ \\ 
-			$f_6$ & -4.519 & -4.501 & 9.470 & 0.069 & $2.82x10^{-6}$ & -14.048 & -9.503 & 19.626 & 4.519 & $8.31x10^{-6}$ & -28.591 & -14.508 & 29.409 & 14.049 & $1.65x10^{-5}$ \\ 
-			$f_7$ & 260.916 & 260.034 & 516.794 & 30.185 & $6.16x10^{-6} $ & 809.138 & 554.855 & 1058.76 & 265.183 & $1.84x10^{-5}$ & 1658.45 & 849.75 & 1709.94 & 810.814 & $3.69x10^{-5}$ \\ 
-			$f_8$ & 2946.27 & 2904.35 & 5900.96 & 484.65 & $4.58x10^{-6}$ & 9053.53 & 6136.6 & 12351 & 3028.79 & $1.352x10{-5}$ & 18323.3 & 9219.26 & 18275.4 & 9106.18 & $2.679x10^{-5}$ \\ 
-			$f_9$ & 194.546 & 194.821 & 386.619 & 2.45452 & $6.77x10^{-6}$ & 604.249 & 409.676 & 820.067 & 194.571 & $2.051x10^{-5}$ & 1230.71 & 626.903 & 1251.74 & 604.264 & $4.0977x10^{-5}$ \\ 
-			$f_{10}$ & 1.33123 & -15.7553 & 4025.12 & 785.802 & $5.168x10^{-6}$ & -12.4418 & 17.6802 & 6478.28 & 1215.58 & $1.596x10^{-5}$ & -168.112 & -59.2933 & 7074.71 & 1604.07 & $3.155x10^{-5}$ \\ 
-			$f_{11}$ & 216.193 & 231.67 & 3699.49 & 675.029 & $6.373x10^{-6}$ & 644.442 & 454.87 & 4076.84 & 905.863 & $1.865x10^{-5}$ & 1225.32 & 720.602 & 5010.82 & 1270.95 & $3.709x10^{-5}$ \\ 
-			$f_{12}$ & 4.49733 & 4.5 & 9.04435 & 0.114752 & $4.782x10^{-6}$ & 13.9845 & 9.5 & 18.9482 & 4.49991 & $1.447x10^{-5}$ & 28.4786 & 14.5 & 28.9344 & 13.9851 & $2.900x10^{-5}$ \\ 
-			$f_{13}$ & -0.0726131 & -0.00243635 & 4.12626 & 0.803608 & $4.833x10^{-6}$ & -0.0118846 & 0.0963513 & 7.2932 & 1.17783 & $7.713x10^{-5}$ & 0.0929392 & 0.0393486 & 7.1884 & 1.35032 & $9.029x10^{-5}$ \\ 
-			$f_{14}$ & 0.0031038 & 0 & 0.407125 & 0.0360666 & $5.972x10^{-6}$ & 0.0031038 & 0 & $1.184x10^{-26}$ & 0.0031038 & $1.893x10^{-5}$ & 0.0031038 & 0 & $5.003x10^{-13}$ & 0.0031038 & $3.690x10^{-5}$ \\ 
-			$f_{15}$ & $-3.354x10^{-5}$ & $-3.158x10^{-5}$ & 0.000110934 & $9.975x10^{-6}$ & $1.363x10^{-5}$ & N/A & N/A & N/A & N/A & N/A & N/A & N/A & N/A & N/A & N/A \\ 
+			$f_1$ & $-61.82$ & $-46.80$ & $3177.65$ & $596.77$ & $2.77\times10^{-7}$ & $-147.22$ & $1.73$ & $4926.18$ & $917.83$ & $6.63\times10^{-7}$ & $-303.71$ & $-268.39$ & $5861.72$ & $1131.09$ & $1.16\times10^{-6}$ \\ 
+			$f_2$ & $859142$ & $838788$ & $1.75\times10^{6}$ & $237719$ & $1.40\times10^{-7}$ & $2.64\times10^{6}$ & $1.81\times10^{6}$ & $3.20\times10^{6}$ & $925823$ & $2.29\times10{-7}$ & $5.21\times10^{6}$ & $2.62\times10^{6}$ & $5.08\times10^{6}$ & $2.67\times10^{6}$ & $3.39\times10^{-7}$ \\ 
+			$f_3$ & $1.18\times10^{13}$ & $1.11\times10^{13}$ & $3.30\times10^{13}$ & $5.07\times10^{12}$ & $2.47\times10^{-8}$ & $3.79\times10^{13}$ & $2.63\times10^{13}$ & $6.22\times10^{13}$ & $1.47\times10^{13}$ & $9.58\times10^{-8}$ & $7.79\times10^{13}$ & $4.08\times10^{13}$ & $9.09\times10^{13}$ & $3.92\times10^{13}$ & $1.88\times10^{-7}$ \\ 
+			$f_4$ & $870095$ & $862871$ & $1.84\times10^{6}$ & $242235$ & $1.23\times10^{-7}$ & $2.62\times10^{6}$ & $1.77\times10^{6}$ & $3.85\times10^{6}$ & $942880$ & $4.96\times10^{-7}$ & $5.22\times10^{6}$ & $2.60\times10^{6}$ & $5.41\times10^{6}$ & $2.66\times10^{6}$ & $1.02\times10^{-6}$ \\ 
+			$f_5$ & $219.84$ & $207.35$ & $441.22$ & $69.07$ & $3.83\times10^{-7}$ & $661.70$ & $451.62$ & $871.89$ & $238.64$ & $6.84\times10^{-6}$ & $1315.61$ & $669.64$ & $1229.62$ & $668.70$ & $2.32\times10^{-6}$ \\ 
+			$f_6$ & $-4.52$ & $-4.50$ & $9.47$ & $0.07$ & $1.40\times10^{-7}$ & $-14.05$ & $-9.50$ & $19.63$ & $4.52$ & $5.44\times10^{-7}$ & $-28.60$ & $-14.51$ & $29.41$ & $14.05$ & $1.13\times10^{-6}$ \\ 
+			$f_7$ & $260.92$ & $260.03$ & $516.79$ & $30.19$ & $1.09\times10^{-6} $ & $809.14$ & $554.86$ & $1058.76$ & $265.18$ & $3.18\times10^{-6}$ & $1658.45$ & $849.75$ & $1709.94$ & $810.81$ & $6.28\times10^{-6}$ \\ 
+			$f_8$ & $2946.27$ & $2904.35$ & $5900.96$ & $484.65$ & $3.45\times10^{-7}$ & $9053.53$ & $6136.60$ & $12351$ & $3028.79$ & $9.64\times10{-7}$ & $18323.30$ & $9219.26$ & $18275.40$ & $9106.18$ & $1.84\times10^{-6}$ \\ 
+			$f_9$ & $194.55$ & $194.82$ & $386.62$ & $2.45$ & $5.54\times10^{-7}$ & $604.25$ & $409.68$ & $820.07$ & $194.57$ & $1.63\times10^{-6}$ & $1230.71$ & $626.90$ & $1251.74$ & $604.26$ & $3.31\times10^{-6}$ \\ 
+			$f_{10}$ & $1.33$ & $-15.76$ & $4025.12$ & $785.80 $& $6.77\times10^{-7}$ & $-12.44$ & $17.68$ & $6478.28$ & $1215.58$ & $1.98\times10^{-6}$ & $-168.11$ & $-59.29$ & $7074.71$ & $1604.07$ & $3.98\times10^{-6}$ \\ 
+			$f_{11}$ & $216.19$ & $231.67$ & $3699.49$ & $675.03$ & $4.89\times10^{-7}$ & $644.44$ & $454.87$ & $4076.84$ & $905.86$ & $1.45\times10^{-6}$ & $1225.32$ & $720.60$ & $5010.82$ & $1270.95$ & $2.85\times10^{-6}$ \\ 
+			$f_{12}$ & $4.50$ & $4.50$ & $9.04$ & $0.11$ & $3.49\times10^{-7}$ & $13.98$ & $9.50$ & $18.95$ & $4.50$ & $1.03\times10^{-6}$ & $28.48$ & $14.50$ & $28.93$ & $13.99$ & $2.05\times10^{-6}$ \\ 
+			$f_{13}$ & $-0.0736$ & $-0.0024$ & $4.13$ & $0.80$ & $9.44\times10^{-7}$ & $-0.0119$ & $0.0964$ & $7.29$ & $1.18$ & $2.73\times10^{-6}$ & $0.0929$ & $0.0393$ & $7.19$ & $1.35$ & $5.41\times10^{-6}$ \\ 
+			$f_{14}$ & $0.0031$ & $0 $& $0.41$ & $0.04$ & $9.23\times10^{-7}$ & $0.0031$ & $0$ & $1.18\times10^{-26}$ & $0.0031$ & $2.69\times10^{-6}$ & $0.0031$ & $0$ & $5.00\times10^{-13}$ & $0.0031$ & $5.31\times10^{-6}$ \\ 
+			$f_{15}$ & $-3.35\times10^{-5}$ & $-3.16\times10^{-5}$ & $0.00011$ & $9.98\times10^{-6}$ & $3.25\times10^{-7}$ & N/A & N/A & N/A & N/A & N/A & N/A & N/A & N/A & N/A & N/A \\
 \noalign{\smallskip}\hline\noalign{\smallskip}
-	Mean & 4.03 & 2.55 & 5.57 & 0.97 & 78.35 & 2.79 & 2.54 & 3.05 & 0.16 & 9.15 & 3.54 & 3.3 & 3.82 & 0.17 & 9.15\\ 
+	Mean & $7.87\times10^{11}$ & $7.40\times10^{11}$ & $3.43\times10^{12}$ & $3.38\times10^{11}$ & $4.52\times10^{-7}$ & $2.71\times10^{12}$ & $1.88\times10^{12}$ & $4.44\times10^{12}$ & $1.05\times10^{12}$ & $1.75\times10^{-7}$ & $5.56\times10^{12}$ & $2.91\times10^{12}$ & $6.49\times10^{12}$ & $2.80\times10^{12}$ & $2.66\times10^{-6}$\\ 
 \noalign{\smallskip}\hline\noalign{\smallskip}
-\multicolumn{16}{l}{\tiny $^1$ MacBook Pro, 2.3GHz Intel Core i7 (2nd gen), 8 GB RAM} \\
-\multicolumn{16}{l}{\tiny $^2$ Pentium P-IV, 3.0 GHz, 512 MB}
-	\end{tabular}
+\multicolumn{16}{l}{\tiny $^1$ 3.2GHz AMD Ryzen 7 1700X, 16 GB RAM}
+	\end{tabular}\label{T2}
 \end{sidewaystable}
-
 
 %----------------------------------------------------------------------------------------
 \end{document}

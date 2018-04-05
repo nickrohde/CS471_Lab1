@@ -1,0 +1,11 @@
+﻿  Driver.cpp
+c1xx : warning C4199: two-phase name lookup is not supported for C++/CLI, C++/CX, or OpenMP; use /Zc:twoPhase-
+Driver.cpp(605): warning C4018: '<': signed/unsigned mismatch
+Driver.cpp(618): warning C4018: '<': signed/unsigned mismatch
+Driver.cpp(628): warning C4018: '<': signed/unsigned mismatch
+Driver.cpp(679): warning C4018: '<': signed/unsigned mismatch
+Driver.cpp(755): warning C4018: '<': signed/unsigned mismatch
+  Generating code
+  All 291 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  Lab1.vcxproj -> C:\Users\nicol\Desktop\Stuff\school\2_Spring18\CS471\CS471_Lab1\Lab1\Release\Lab1.exe

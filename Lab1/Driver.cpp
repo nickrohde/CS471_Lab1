@@ -62,11 +62,10 @@ inline double getStandardDeviation(const vector<T>* p_data, const double d_mean)
 
 
 template <typename T>
-inline string getRange(const vector<T>* p_data)
+inline double getRange(const vector<T>* p_data)
 {
-	stringstream  result;
-
-	T	min = p_data->at(0),
+	T	result,
+		min = p_data->at(0),
 		max = p_data->at(0);
 
 
@@ -82,9 +81,9 @@ inline string getRange(const vector<T>* p_data)
 		} // end if
 	} // end if
 
-	result << "[" << min << ", " << max << "]";
+	result = max-min;
 
-	return result.str();
+	return result;
 } // end template getRange
 
 
@@ -110,7 +109,7 @@ inline double schwefelsFunction(const vector<double>* vect)
 {
 	double total = 0.0;
 	
-#pragma loop(hint_parallel(0))
+//#pragma loop(hint_parallel(0))
 	// SUM[1->n]
 	for(auto& d: *vect)
 	{
@@ -128,7 +127,7 @@ inline double firstDeJongsFunction(const vector<double>* vect)
 {
 	double total = 0.0;
 	
-#pragma loop(hint_parallel(0))
+//#pragma loop(hint_parallel(0))
 	// SUM[1->n]
 	for(auto& d: *vect)
 	{
@@ -179,8 +178,8 @@ inline double rastriginFunction(const vector<double>* vect)
 	total += (10 * vect->size());							// 10*n + SUM
 
 	total -= 200 * vect->size();							// shift down by -200n to move optimal point from 0 to -200n
-	//*/
-	/* Using the function 2 * n * SUM(x^2 - 10cos(2*pi*x)
+	/*/
+	// Using the function 2 * n * SUM(x^2 - 10cos(2*pi*x)
 #pragma loop(hint_parallel(0))
 	// SUM[1->n]
 	for(std::size_t i = 0; i < vect->size(); i++)
@@ -194,7 +193,7 @@ inline double rastriginFunction(const vector<double>* vect)
 	} // end for
 	
 	total *= (2 * vect->size()); // 2n * SUM
-	/*/
+	//*/
 	return total;
 } // end method rastriginFunction                                     
 
@@ -671,7 +670,7 @@ inline void testRun(double(*f)(const vector<double>*), ofstream& results, const 
 
 	for (size_t ui_size = 10; ui_size <= 30; ui_size += 10)
 	{
-		results << "Data with input size = " << ui_size << ",\n";
+		//results << "Data with input size = " << ui_size << ",";
 
 		vector<double>* data = new vector<double>();
 		vector<double>* vec;
@@ -692,7 +691,7 @@ inline void testRun(double(*f)(const vector<double>*), ofstream& results, const 
 			d_totalTime = d_totalTime + time_to_compute.count();
 			d_total = d_total + d_temp;
 
-			results << d_temp << "," << time_to_compute.count() << ",";
+			//results << d_temp << "," << time_to_compute.count() << ",";
 
 			data->push_back(d_temp);
 
@@ -702,20 +701,32 @@ inline void testRun(double(*f)(const vector<double>*), ofstream& results, const 
 		d_avgTime  = d_totalTime / static_cast<double>(ui_ITERATIONS);
 		d_mean     = d_total / static_cast<double>(ui_ITERATIONS);
 		d_standDev = getStandardDeviation(data, d_mean);
-
+		/*
 		results << "\n";
-		results << "Mean time:, " << d_avgTime;
-		results << ",";
 		results << "Mean value:, " << d_mean;
 		results << ",";
 		results << "Median value:, " << getMedian(data);
 		results << ",";
 		results << "Range:, " << getRange(data);
 		results << ",";
-		results << "Standard Deviation:, " << d_standDev << ",\n";
+		results << "Standard Deviation:, " << d_standDev;
+		results << ",";
+		results << "Mean time:, " << d_avgTime << ",\n";
+		/*/
+		results << ",";
+		results << d_mean;
+		results << ",";
+		results << getMedian(data);
+		results << ",";
+		results << getRange(data);
+		results << ",";
+		results <<d_standDev;
+		results << ",";
+		results << d_avgTime << ",";
+		//*/
 	} // end for
 
-	results << "\n";
+	results << "\n\n";
 } // end method testRun
 
 
@@ -756,7 +767,7 @@ inline void foxholeTestRun(ofstream& results, const size_t ui_ITERATIONS, const 
 		d_totalTime += time_to_compute.count();
 		d_total += d_temp;
 
-		results << d_temp << "," << time_to_compute.count() << ",";
+		//results << d_temp << "," << time_to_compute.count() << ",";
 
 		data->push_back(d_temp);
 
@@ -766,7 +777,7 @@ inline void foxholeTestRun(ofstream& results, const size_t ui_ITERATIONS, const 
 	d_avgTime  = d_totalTime / static_cast<double>(ui_ITERATIONS);
 	d_mean     = d_total / static_cast<double>(ui_ITERATIONS);
 	d_standDev = getStandardDeviation(data, d_mean);
-
+	/*
 	results << "\n";
 	results << "Mean time:, " << d_avgTime;
 	results << ",";
@@ -778,7 +789,18 @@ inline void foxholeTestRun(ofstream& results, const size_t ui_ITERATIONS, const 
 	results << ",";
 	results << "Standard Deviation:, " << d_standDev;
 	results << "\n";
-
+	/*/
+	results << "\n,";
+	results << d_mean;
+	results << ",";
+	results << getMedian(data);
+	results << ",";
+	results << getRange(data);
+	results << ",";
+	results << d_standDev;
+	results << ",";
+	results << d_avgTime << ",\n";
+	//*/
 
 	for (std::size_t i = 0; i < 30; i++)
 	{
@@ -796,13 +818,20 @@ int main(void)
 	ofstream results("results.csv", ios::app | ios::out);
 	ofstream knownResults("knownValuesResults.csv", ios::app | ios::out);
 
+	/*
 	// output file setup
 	for (size_t i = 0; i < ui_ITERATIONS; i++)
 	{
 		results << "Run " << (i+1) << ", Time " << (i+1) << ",";
 	} // end for 
-
+	
 	results << "\n,";
+	/*/
+
+	results << "10,Mean, Median, Range, SD, T(s),";
+	results << "20,Mean, Median, Range, SD, T(s),";
+	results << "30,Mean, Median, Range, SD, T(s)\n";
+
 
 	std::chrono::duration<double, std::nano> ns = typename std::chrono::high_resolution_clock::duration(1);
 	std::chrono::high_resolution_clock::time_point	compute_start = std::chrono::high_resolution_clock::now(),
@@ -810,7 +839,7 @@ int main(void)
 
 	cout << "Clock precision for testing is 1 tick = " << ns.count() << " ns." << endl;
 
-	cout << "Starting tests with known data ..." << endl;
+	//cout << "Starting tests with known data ..." << endl;
 	compute_start = std::chrono::high_resolution_clock::now();
 
 #pragma region known_output_tests
@@ -826,13 +855,13 @@ int main(void)
 
 	knownResults.close();
 
-	cout << "Finished tests with known data." << endl << endl;
+	//cout << "Finished tests with known data." << endl << endl;
 
 #pragma endregion
 
 #pragma region random_data_tests
 
-	cout << "Starting tests with random data ..." << endl;
+	//cout << "Starting tests with random data ..." << endl;
 
 	results << "\nSchwefel's Function tests:\n";
 	testRun(schwefelsFunction, results, ui_ITERATIONS, -512, 512);
